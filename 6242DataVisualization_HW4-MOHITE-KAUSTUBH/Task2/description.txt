@@ -1,0 +1,4 @@
+I use the Gini Impurity to identify the threshold value for the ‘cleanest’ two-way split (based on a randomly selected attribute). This is recommended by the original developers of the Random Forest algorithm. Also, I select 3 attributes to build a tree (floor of the square root of the total number of attributes). 
+I use recursion to grow the tree, as well as to classify a record.
+
+OOB estimate: 0.2135

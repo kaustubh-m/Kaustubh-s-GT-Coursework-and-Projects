@@ -1,0 +1,72 @@
+n = 10
+
+Completed 1/10 iterations. 4.33400011063 seconds elapsed.
+Completed 2/10 iterations. 8.98900008202 seconds elapsed.
+Completed 3/10 iterations. 13.4270000458 seconds elapsed.
+Completed 4/10 iterations. 17.861000061 seconds elapsed.
+Completed 5/10 iterations. 22.4520001411 seconds elapsed.
+Completed 6/10 iterations. 26.6719999313 seconds elapsed.
+Completed 7/10 iterations. 30.9270000458 seconds elapsed.
+Completed 8/10 iterations. 35.1660001278 seconds elapsed.
+Completed 9/10 iterations. 39.4019999504 seconds elapsed.
+Completed 10/10 iterations. 43.6630001068 seconds elapsed.
+
+
+
+
+n = 20
+
+Completed 1/20 iterations. 4.3599998951 seconds elapsed.
+Completed 2/20 iterations. 8.8789999485 seconds elapsed.
+Completed 3/20 iterations. 13.1789999008 seconds elapsed.
+Completed 4/20 iterations. 17.4189999104 seconds elapsed.
+Completed 5/20 iterations. 21.6380000114 seconds elapsed.
+Completed 6/20 iterations. 25.8589999676 seconds elapsed.
+Completed 7/20 iterations. 30.0720000267 seconds elapsed.
+Completed 8/20 iterations. 34.3380000591 seconds elapsed.
+Completed 9/20 iterations. 38.5479998589 seconds elapsed.
+Completed 10/20 iterations. 42.7630000114 seconds elapsed.
+Completed 11/20 iterations. 46.9549999237 seconds elapsed.
+Completed 12/20 iterations. 51.1440000534 seconds elapsed.
+Completed 13/20 iterations. 55.3469998837 seconds elapsed.
+Completed 14/20 iterations. 59.5450000763 seconds elapsed.
+Completed 15/20 iterations. 63.743999958 seconds elapsed.
+Completed 16/20 iterations. 67.9300000668 seconds elapsed.
+Completed 17/20 iterations. 72.1370000839 seconds elapsed.
+Completed 18/20 iterations. 76.3209998608 seconds elapsed.
+Completed 19/20 iterations. 80.513999939 seconds elapsed.
+Completed 20/20 iterations. 84.7049999237 seconds elapsed.
+
+
+n=30
+
+Completed 1/30 iterations. 4.36599993706 seconds elapsed.
+Completed 2/30 iterations. 8.59500002861 seconds elapsed.
+Completed 3/30 iterations. 12.8329999447 seconds elapsed.
+Completed 4/30 iterations. 17.0659999847 seconds elapsed.
+Completed 5/30 iterations. 21.2860000134 seconds elapsed.
+Completed 6/30 iterations. 25.5069999695 seconds elapsed.
+Completed 7/30 iterations. 29.7200000286 seconds elapsed.
+Completed 8/30 iterations. 33.9230000973 seconds elapsed.
+Completed 9/30 iterations. 38.1380000114 seconds elapsed.
+Completed 10/30 iterations. 42.6019999981 seconds elapsed.
+Completed 11/30 iterations. 47.1380000114 seconds elapsed.
+Completed 12/30 iterations. 51.5120000839 seconds elapsed.
+Completed 13/30 iterations. 55.8880000114 seconds elapsed.
+Completed 14/30 iterations. 60.1909999847 seconds elapsed.
+Completed 15/30 iterations. 64.6819999218 seconds elapsed.
+Completed 16/30 iterations. 69.1069998741 seconds elapsed.
+Completed 17/30 iterations. 73.6849999428 seconds elapsed.
+Completed 18/30 iterations. 78.1889998913 seconds elapsed.
+Completed 19/30 iterations. 82.5339999199 seconds elapsed.
+Completed 20/30 iterations. 87.0179998875 seconds elapsed.
+Completed 21/30 iterations. 91.4230000973 seconds elapsed.
+Completed 22/30 iterations. 95.8440001011 seconds elapsed.
+Completed 23/30 iterations. 100.275000095 seconds elapsed.
+Completed 24/30 iterations. 104.684000015 seconds elapsed.
+Completed 25/30 iterations. 109.030999899 seconds elapsed.
+Completed 26/30 iterations. 113.332999945 seconds elapsed.
+Completed 27/30 iterations. 117.713999987 seconds elapsed.
+Completed 28/30 iterations. 122.045000076 seconds elapsed.
+Completed 29/30 iterations. 126.302999973 seconds elapsed.
+Completed 30/30 iterations. 130.572000027 seconds elapsed.
