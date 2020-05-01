@@ -1,0 +1,6 @@
+c) i) 1) key collision (fingerprint) is better because: it leads to fewer clusters - 68 vs. 174, it performs much faster, and it produces clusters that are named with the common text (e.g. 'DINNER'), rather than the specific text of one particular instance (as done by KNN - e.g. 15th ANNUAL DINNER)
+      2) key collision (fingerprint) and (ngram fingerprint) produced similar numbers of clusters, however, ngram fingerprints ignored punctuation, whitespace and contraol characters, whereas fingerprint included them in the clustering.
+
+c) iii) Nominal data: 'location'; Ordinal data: 'date'
+
+c) v) Splitting a column into multiple columns based on a specified splitting character. I split the column 'Notes' into multiple notes based on ';'. This can allow us to analyse each note as a separate piece of text, and is potentially useful in text mining.

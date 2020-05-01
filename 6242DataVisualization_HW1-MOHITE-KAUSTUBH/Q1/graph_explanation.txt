@@ -1,0 +1,1 @@
+I chose the Yifan Hu algorithm to minimise edge intersections and to space the nodes informatively. Further, I used the Label Adjust algorithm to make the labels legible. I did not choose to hide the non-selected labels, since the output is a static image

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script type="text/javascript" src="d3/d3.v3.js"></script>
+		<style type = "text/css">
+			div.bar{
+			display: inline-block;
+			width: 30px;
+			height: 75px;
+			margin-right: 2px;
+			}
+		</style>
+    </head>
+    <body>
+        
+		<b>Kaustubh Mohite</b>	<br/>
+		<script type="text/javascript">
+		var dataset = [];		
+		var c10 = d3.scale.category10();
+		for (var i = 0; i < 25; i++) 
+			{           
+			var newNumber = Math.round(Math.random() * 30);  
+			dataset.push(newNumber);
+			c10(Math.floor(newNumber/5));
+			}
+		
+		d3.select("body")
+		.selectAll("div")
+		.data(dataset)
+		.enter()
+		.append("div")
+		.attr("class", "bar")
+		.style("height", function(d) {var barHeight = d * 5;return barHeight + "px";})
+		.style( "background-color", function (d, i){return c10(Math.floor(i/5));})
+		;
+			
+		
+		
+        </script>
+		
+		
+    </body>
+</html>

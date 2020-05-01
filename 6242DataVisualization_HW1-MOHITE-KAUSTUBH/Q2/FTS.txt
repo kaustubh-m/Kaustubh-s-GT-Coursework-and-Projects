@@ -1,0 +1,1 @@
+The 'MATCH' operator performs better than the 'LIKE' statement - reason: 'MATCH' uses the built-in index of the virtual table, whereas 'LIKE' does not. Further, the xBestIndex method is used to find the most efficient access plan, when querying a virtual table
