@@ -1,0 +1,215 @@
+
+	
+
+best <- function(state, outcome) 
+{
+
+	valid_st_names <- unique(Outcomes[[7]])
+	lookup_state <- valid_st_names[valid_st_names == state]
+
+	if(length(lookup_state)==0) 
+	{
+		stop("invalid state")
+	}
+
+	Outcomes <- read.csv("outcome-of-care-measures.csv", colClasses="character")
+
+	Outcomes_st <- Outcomes[Outcomes$State == toupper(state),]
+
+	if(toupper(outcome) == 'HEART ATTACK')
+	{
+		Outcomes_st_tmp <- Outcomes_st[,c(1,2,7,11)]
+		Outcomes_st_ailmt <- Outcomes_st_tmp[Outcomes_st_tmp[[4]] != 'Not Available',]
+		Outcomes_st_ailmt[,4] <- as.numeric(Outcomes_st_ailmt[,4])
+		Outcomes_st_ailmt_compl <- Outcomes_st_ailmt[complete.cases(Outcomes_st_ailmt),]
+		Outcomes_best_row <- Outcomes_st_ailmt_compl[which.min(Outcomes_st_ailmt_compl[,4]),]
+		return(Outcomes_best_row[,2])
+	}
+	
+	if(toupper(outcome) == 'HEART FAILURE')
+	{
+		Outcomes_st_tmp <- Outcomes_st[,c(1,2,7,17)]
+		Outcomes_st_ailmt <- Outcomes_st_tmp[Outcomes_st_tmp[[4]] != 'Not Available',]
+		Outcomes_st_ailmt[,4] <- as.numeric(Outcomes_st_ailmt[,4])
+		Outcomes_st_ailmt_compl <- Outcomes_st_ailmt[complete.cases(Outcomes_st_ailmt),]
+		Outcomes_best_row <- Outcomes_st_ailmt_compl[which.min(Outcomes_st_ailmt_compl[,4]),]
+		return(Outcomes_best_row[,2])
+		
+	}
+
+	if(toupper(outcome) == 'PNEUMONIA')
+	{
+		Outcomes_st_tmp <- Outcomes_st[,c(1,2,7,23)]
+		Outcomes_st_ailmt <- Outcomes_st_tmp[Outcomes_st_tmp[[4]] != 'Not Available',]
+		Outcomes_st_ailmt[,4] <- as.numeric(Outcomes_st_ailmt[,4])
+		Outcomes_st_ailmt_compl <- Outcomes_st_ailmt[complete.cases(Outcomes_st_ailmt),]
+		Outcomes_best_row <- Outcomes_st_ailmt_compl[which.min(Outcomes_st_ailmt_compl[,4]),]
+		return(Outcomes_best_row[,2])
+	}
+
+	stop("invalid outcome")
+}
+
+
+
+rankhospital <- function(state, outcome, num = "best") 
+{
+
+	Outcomes <- read.csv("outcome-of-care-measures.csv", colClasses="character")
+
+	valid_st_names <- unique(Outcomes[[7]])
+	lookup_state <- valid_st_names[valid_st_names == state]
+
+	if(length(lookup_state)==0) 
+	{
+		stop("invalid state")
+	}
+
+	if(toupper(outcome) != 'HEART ATTACK' & toupper(outcome) != 'HEART FAILURE' & toupper(outcome) != 'PNEUMONIA')
+	{
+		stop('invalid outcome')
+	}
+
+	Outcomes_st <- Outcomes[Outcomes$State == toupper(state),]
+
+	if(toupper(outcome) == 'HEART ATTACK')
+	{
+		Outcomes_st <- Outcomes_st[,c(1,2,7,11)]
+
+	}
+	if(toupper(outcome) == 'HEART FAILURE')
+	{
+		Outcomes_st <- Outcomes_st[,c(1,2,7,17)]
+
+	}
+	if(toupper(outcome) == 'PNEUMONIA')
+	{
+		Outcomes_st <- Outcomes_st[,c(1,2,7,23)]
+
+	}
+
+		Outcomes_st_ailmt <- Outcomes_st[Outcomes_st[[4]] != 'Not Available',]
+		Outcomes_st_ailmt[,4] <- as.numeric(Outcomes_st_ailmt[,4])
+		Outcomes_st_ailmt_compl <- Outcomes_st_ailmt[complete.cases(Outcomes_st_ailmt),]
+		Outcomes_st_ailmt_compl <- Outcomes_st_ailmt_compl[order(Outcomes_st_ailmt_compl[,4], Outcomes_st_ailmt_compl[,2]),]
+		Outcomes_hosp_rank <- cbind(Outcomes_st_ailmt_compl, 1:nrow(Outcomes_st_ailmt_compl))
+
+		if(toupper(num) == 'BEST')
+		{
+			Outcomes_best_row <- Outcomes_st_ailmt_compl[which.min(Outcomes_st_ailmt_compl[,4]),]
+			return(Outcomes_best_row[,2])
+		}
+		
+		if(toupper(num) == 'WORST')
+		{
+			Outcomes_worst_row <- Outcomes_st_ailmt_compl[which.max(Outcomes_st_ailmt_compl[,4]),]
+			return(Outcomes_worst_row[,2])
+		}
+		
+		if(!is.na(as.numeric(num)))
+		{
+			Outcomes_hosp_rank_op <- Outcomes_hosp_rank[Outcomes_hosp_rank[[5]] == as.numeric(num),]
+			
+			if(nrow(Outcomes_hosp_rank_op) == 0)
+			{
+				return (NA)
+			}
+			return(Outcomes_hosp_rank_op[[2]])
+		}
+	
+}
+
+
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+
+rankall <- function(outcome, num = "best") 
+{
+
+	Outcomes <- read.csv("outcome-of-care-measures.csv", colClasses="character")
+
+	valid_st_names <- unique(Outcomes[[7]])
+	
+	valid_st_names_sorted <- sort(valid_st_names)
+	
+	if(toupper(outcome) != 'HEART ATTACK' & toupper(outcome) != 'HEART FAILURE' & toupper(outcome) != 'PNEUMONIA')
+	{
+		stop('invalid outcome')
+	}
+
+	if(toupper(outcome) == 'HEART ATTACK')
+	{
+		Outcomes_prj <- Outcomes[,c(1,2,7,11)]
+
+	}
+	if(toupper(outcome) == 'HEART FAILURE')
+	{
+		Outcomes_prj <- Outcomes[,c(1,2,7,17)]
+
+	}
+	if(toupper(outcome) == 'PNEUMONIA')
+	{
+		Outcomes_prj <- Outcomes[,c(1,2,7,23)]
+
+	}
+
+	Outcomes_prj_ailmt <- Outcomes_prj[Outcomes_prj[[4]] != 'Not Available',]
+	Outcomes_prj_ailmt[,4] <- as.numeric(Outcomes_prj_ailmt[,4])
+	Outcomes_prj_ailmt_compl <- Outcomes_prj_ailmt[complete.cases(Outcomes_prj_ailmt),]
+	Outcomes_prj_ailmt_compl <- Outcomes_prj_ailmt_compl[order(Outcomes_prj_ailmt_compl[,7], Outcomes_prj_ailmt_compl[,4], Outcomes_prj_ailmt_compl[,2]),]
+
+	Output_df <- data.frame(hospital = character(0), state = character(0))
+
+	
+	if(toupper(num) == 'BEST')
+	{
+		for(st in valid_st_names_sorted)
+		{
+			Outcomes_st <- Outcomes_prj_ailmt_compl[Outcomes_prj_ailmt_compl[[3]] == st,]
+			Outcomes_best_row <- Outcomes_st[which.min(Outcomes_st[,4]),]
+			Output_df <- rbind(Output_df,Outcomes_best_row[,c(2,3)]
+	`	}
+	}	
+
+		
+		
+	if(toupper(num) == 'WORST')
+	{
+		for(st in valid_st_names_sorted)
+		{
+			Outcomes_st <- Outcomes_prj_ailmt_compl[Outcomes_prj_ailmt_compl[[3]] == st,]
+			Outcomes_worst_row <- Outcomes_st[which.max(Outcomes_st[,4]),]
+			Output_df <- rbind(Output_df,Outcomes_worst_row[,c(2,3)]
+		}
+	}
+		
+		
+	if(!is.na(as.numeric(num)))
+	{
+		for(st in valid_st_names_sorted)
+		{
+			Outcomes_st <- Outcomes_prj_ailmt_compl[Outcomes_prj_ailmt_compl[[3]] == st,]
+			Outcomes_st_hosp_rank <- cbind(Outcomes_st, 1:nrow(Outcomes_st_ailmt_compl))
+			Outcomes_hosp_rank_op <- Outcomes_hosp_rank[Outcomes_hosp_rank[[5]] == as.numeric(num),]
+			
+			if(nrow(Outcomes_hosp_rank_op) == 0)
+			{
+				Outcomes_hosp_rank_op <- rbind(Outcomes_hosp_rank_op,c(NA,NA,st,NA,NA))
+			}
+			Output_df <- rbind(Output_df,Outcomes_hosp_rank_op[,c(2,3)])
+		}
+
+	}
+
+
+}
+## Read outcome data
+## Check that state and outcome are valid
+## For each state, find the hospital of the given rank
+## Return a data frame with the hospital names and the
+## (abbreviated) state name
+}
+
+
+
