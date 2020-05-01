@@ -1,0 +1,23 @@
+Description of code in task2.scala:
+
+Line 12: Reads file from HDFS into an RDD (Resilient Distributed Dataset) – input file: argument (arg[0]) of run*.sh
+
+Line 17: Splits each line of the RDD ('\t' as separator) into string array: source , target, weight
+
+Line 20, 23: Creates two RDDs - (source, weight) and (target, weight) using the respective elements of each array.
+The weights are parsed into integers, weight is made negative for each source node ('outgoing weight').
+
+Lines 26, 27: Eliminates all sources, targets with a value of weight = -1 (or 1, for targets).
+
+Line 31: Union 'source' and 'target' RDDs. Output: (node, signed weight)
+
+Line 34: Aggregates (reduces) the Union RDD by node, takes sum of 'weight'. Output: (node, net weight)
+
+Line 41: Maps each line (mixed string/int array) of Aggregated RDD to a string 
+Line 41: Writes string RDD to text file (arg[1] of run*.sh)
+
+
+
+
+
+
