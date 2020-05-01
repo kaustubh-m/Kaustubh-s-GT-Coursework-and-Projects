@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v3.min.js"></script>
+<head>
+<link rel="stylesheet" href="scatterplot.css">
+
+</head>
+
+<body>
+
+<script type="text/javascript">
+
+
+d3.tsv("iris.tsv", function(data){
+	
+	
+	//Adapted from: http://alignedleft.com/tutorials/d3
+	
+	
+	
+	var w = 600;
+	var h = 300;
+	
+	var padding = 100;
+	
+	
+	
+	
+	
+						
+	// symbol generators
+	// Based on: http://stackoverflow.com/questions/29573481/d3-js-scatterplot-with-different-colors-and-symbols-issues-encountered
+	
+	
+	var symbolTypes = {
+		"triangleDown": d3.svg.symbol().type("triangle-up"),
+		"circle": d3.svg.symbol().type("circle"),
+		"square": d3.svg.symbol().type("square")
+	};
+	
+	
+	//Legend with scatter plot symbols
+	var svg0 = d3.select("body")
+            .append("svg")
+			.attr("width", w)
+			.attr("height", h-40)	
+	
+	svg0.selectAll("path") 
+    .data(["setosa", "versicolor", "virginica"])
+    .enter().append("path")
+    .attr("class", "dot")
+    .attr("transform", function(d) {switch(d)
+		{
+		case "setosa":
+		{
+		x = w-100
+		y = h-50
+        return "translate(" + x + "," + y + ")"}
+		case "versicolor":
+		{
+		x = w-100
+		y = h-70
+        return "translate(" + x + "," + y + ")"}
+		
+		default: 
+		{x = w-100
+		y = h-90
+        return "translate(" + x + "," + y + ")"}
+		}
+		})
+    
+    //assign d from symbols generated - per question requirement
+    .attr("d", function(d,i){
+        if (d == "setosa") 
+			return symbolTypes.circle.size(20)()
+            //return symbolTypes.circle.size(d.sepalLength*d.sepalLength/10)();
+        if (d == "versicolor")
+            return symbolTypes.square.size(20)();
+		if (d == "virginica")
+           return symbolTypes.triangleDown.size(20)();
+    })
+	
+	
+    // color of scatter-plot symbols based on 'species'
+    .style("fill", "white")
+	.style("stroke", function(d){
+        if (d == "setosa"){ return ("orange")}
+        if (d == "versicolor"){return ("blue")}
+        if (d == "virginica"){return ("maroon")}
+		})
+	.style("stroke-width", 0.5)
+	
+	svg0.append("text")
+	.attr("x", w-80)
+	.attr("y", h-90)
+	.text("virginica");
+		
+		
+	svg0.append("text")
+	.attr("x", w-80)
+	.attr("y", h-70)
+	.text("versicolor");
+	
+	svg0.append("text")
+	.attr("x", w-80)
+	.attr("y", h-50)
+	.text("setosa");
+	
+	////////// Scatter plot #1 Sepal length vs. Sepal width
+	
+	var x1Scale = d3.scale.linear()
+						.domain([3,d3.max(data, function(d) { return d["sepalLength"]; })])
+						//.range([0,w/2]);
+						.range([padding,w - padding*2]);
+	var y1Scale = d3.scale.linear()
+						.domain([1,d3.max(data, function(d) { return d["sepalWidth"]; })])
+						//.range([0,h/2]);
+						.range([h-padding,padding]);
+	
+	var svg1 = d3.select("body")
+            .append("svg")
+			.attr("width", w)
+			.attr("height", h)
+			
+	
+	
+	svg1.selectAll("path")
+    .data(data)
+    .enter().append("path")
+    .attr("class", "dot")
+    .attr("transform", function(d) { 
+		x = x1Scale(d.sepalLength)
+		y = y1Scale(d.sepalWidth)
+        return "translate(" + x + "," + y + ")"
+    })
+    //assign d from symbols generated - per question requirement
+    .attr("d", function(d,i){
+        if (d.species == "setosa") 
+			return symbolTypes.circle.size(20)()
+            //return symbolTypes.circle.size(d.sepalLength*d.sepalLength/10)();
+        if (d.species == "versicolor")
+            return symbolTypes.square.size(20)();
+		if (d.species == "virginica")
+           return symbolTypes.triangleDown.size(20)();
+    })
+	
+	
+    // color of scatter-plot symbols based on 'species'
+    .style("fill", "white")
+	.style("stroke", function(d){
+        if (d.species == "setosa"){ return ("orange")}
+        if (d.species === "versicolor"){return ("blue")}
+        if (d.species === "virginica"){return ("maroon")}
+		})
+	.style("stroke-width", 0.5)
+	
+	
+	//Adding x-axis
+	
+	var x1Axis = d3.svg.axis()
+                  .scale(x1Scale)
+                  .orient("bottom");
+				  
+	svg1.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(0," + (h - padding) + ")")
+	.call(x1Axis);
+	
+	
+	//Adding y-axis
+	
+	var y1Axis = d3.svg.axis()
+                  .scale(y1Scale)
+                  .orient("left");
+				  
+	svg1.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(" + padding + ",0)")
+	.call(y1Axis);
+	
+	
+	//Adding title
+	
+	svg1.append("text")
+        .attr("x", (w / 2.5))             
+        .attr("y", padding/2)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Sepal length (cm) vs. Sepal width (cm)");
+		
+		
+		
+		
+	///////////////Scatter plot #2 - petal length vs. petal width
+	
+	
+	var x2Scale = d3.scale.linear()
+						.domain([0,d3.max(data, function(d) { return d["petalLength"]; })])
+						//.range([0,w/2]);
+						.range([padding,w - padding*2]);
+	var y2Scale = d3.scale.linear()
+						.domain([0,d3.max(data, function(d) { return d["petalWidth"]; })])
+						//.range([0,h/2]);
+						.range([h-padding,padding]);
+						
+	
+	
+	var svg2 = d3.select("body")
+            .append("svg")
+			.attr("width", w)
+			.attr("height", h)
+			
+	// symbol generators
+	// Based on: http://stackoverflow.com/questions/29573481/d3-js-scatterplot-with-different-colors-and-symbols-issues-encountered
+	
+	
+	var symbolTypes = {
+		"triangleDown": d3.svg.symbol().type("triangle-up"),
+		"circle": d3.svg.symbol().type("circle"),
+		"square": d3.svg.symbol().type("square")
+	};
+	
+	svg2.selectAll("path")
+    .data(data)
+    .enter().append("path")
+    .attr("class", "dot")
+    .attr("transform", function(d) { 
+		x = x2Scale(d.petalLength)
+		y = y2Scale(d.petalWidth)
+        return "translate(" + x + "," + y + ")"
+    })
+    //assign d from symbols generated - per question requirement
+    .attr("d", function(d,i){
+        if (d.species == "setosa") 
+			return symbolTypes.circle.size(20)()
+            //return symbolTypes.circle.size(d.sepalLength*d.sepalLength/10)();
+        if (d.species == "versicolor")
+            return symbolTypes.square.size(20)();
+		if (d.species == "virginica")
+           return symbolTypes.triangleDown.size(20)();
+    })
+	
+	
+    // color of scatter-plot symbols based on 'species'
+    .style("fill", "white")
+	.style("stroke", function(d){
+        if (d.species == "setosa"){ return ("orange")}
+        if (d.species === "versicolor"){return ("blue")}
+        if (d.species === "virginica"){return ("maroon")}
+		})
+	.style("stroke-width", 0.5)
+	
+	
+	//Adding x-axis
+	
+	var x2Axis = d3.svg.axis()
+                  .scale(x2Scale)
+                  .orient("bottom");
+				  
+	svg2.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(0," + (h - padding) + ")")
+	.call(x2Axis);
+	
+	
+	//Adding y-axis
+	
+	var y2Axis = d3.svg.axis()
+                  .scale(y2Scale)
+                  .orient("left");
+				  
+	svg2.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(" + padding + ",0)")
+	.call(y2Axis);
+	
+	
+	//Adding title
+	
+	svg2.append("text")
+        .attr("x", (w / 2.5))             
+        .attr("y", padding/2)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Petal length (cm) vs. Petal width (cm)");
+		
+		
+	
+	
+	/////////// Scatter plot #3 - sepal length vs. sepal width - proportional symbol size
+	
+	
+	var x3Scale = d3.scale.linear()
+						.domain([3,d3.max(data, function(d) { return d["sepalLength"]; })])
+						//.range([0,w/2]);
+						.range([padding,w - padding*2]);
+	var y3Scale = d3.scale.linear()
+						.domain([1,d3.max(data, function(d) { return d["sepalWidth"]; })])
+						//.range([0,h/2]);
+						.range([h-padding,padding]);
+						
+	
+	
+	var svg3 = d3.select("body")
+            .append("svg")
+			.attr("width", w)
+			.attr("height", h)
+			
+	// symbol generators
+	// Based on: http://stackoverflow.com/questions/29573481/d3-js-scatterplot-with-different-colors-and-symbols-issues-encountered
+	
+	
+	var symbolTypes = {
+		"triangleDown": d3.svg.symbol().type("triangle-up"),
+		"circle": d3.svg.symbol().type("circle"),
+		"square": d3.svg.symbol().type("square")
+	};
+	
+	svg3.selectAll("path")
+    .data(data)
+    .enter().append("path")
+    .attr("class", "dot")
+    .attr("transform", function(d) { 
+		x = x3Scale(d.sepalLength)
+		y = y3Scale(d.sepalWidth)
+        return "translate(" + x + "," + y + ")"
+    })
+    //assign d from symbols generated - per question requirement
+    .attr("d", function(d,i){
+        if (d.species == "setosa") 
+			//return symbolTypes.circle.size(20)()
+            return symbolTypes.circle.size(d.sepalLength*d.sepalLength)();
+        if (d.species == "versicolor")
+            //return symbolTypes.square.size(20)();
+			return symbolTypes.square.size(d.sepalLength*d.sepalLength)();
+		if (d.species == "virginica")
+           //return symbolTypes.triangleDown.size(20)();
+		   return symbolTypes.triangleDown.size(d.sepalLength*d.sepalLength)()
+    })
+	
+	
+    // color of scatter-plot symbols based on 'species'
+    .style("fill", "white")
+	.style("stroke", function(d){
+        if (d.species == "setosa"){ return ("orange")}
+        if (d.species === "versicolor"){return ("blue")}
+        if (d.species === "virginica"){return ("maroon")}
+		})
+	.style("stroke-width", 0.5)
+	
+	
+	//Adding x-axis
+	
+	var x3Axis = d3.svg.axis()
+                  .scale(x3Scale)
+                  .orient("bottom");
+				  
+	svg3.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(0," + (h - padding) + ")")
+	.call(x3Axis);
+	
+	
+	//Adding y-axis
+	
+	var y3Axis = d3.svg.axis()
+                  .scale(y3Scale)
+                  .orient("left");
+				  
+	svg3.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(" + padding + ",0)")
+	.call(y3Axis);
+	
+	
+	//Adding title
+	
+	svg3.append("text")
+        .attr("x", (w / 2.5))             
+        .attr("y", padding/2)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Sepal length (cm) vs. Sepal width (cm) - symbols sized by sepal length");
+		
+		
+		
+		
+		
+		
+	/////////// Scatter plot #4 - sepal length vs. sepal width - SQUARE ROOT scale
+		
+	var x4Scale = d3.scale.sqrt()
+						.domain([3,d3.max(data, function(d) { return d["sepalLength"]; })])
+						//.range([0,w/2]);
+						.range([padding,w - padding*2]);
+	var y4Scale = d3.scale.sqrt()
+						.domain([1,d3.max(data, function(d) { return d["sepalWidth"]; })])
+						//.range([0,h/2]);
+						.range([h-padding,padding]);
+						
+	
+	
+	var svg4 = d3.select("body")
+            .append("svg")
+			.attr("width", w)
+			.attr("height", h)
+			
+	// symbol generators
+	// Based on: http://stackoverflow.com/questions/29573481/d3-js-scatterplot-with-different-colors-and-symbols-issues-encountered
+	
+	
+	var symbolTypes = {
+		"triangleDown": d3.svg.symbol().type("triangle-up"),
+		"circle": d3.svg.symbol().type("circle"),
+		"square": d3.svg.symbol().type("square")
+	};
+	
+	svg4.selectAll("path")
+    .data(data)
+    .enter().append("path")
+    .attr("class", "dot")
+    .attr("transform", function(d) { 
+		x = x4Scale(d.sepalLength)
+		y = y4Scale(d.sepalWidth)
+        return "translate(" + x + "," + y + ")"
+    })
+    //assign d from symbols generated - per question requirement
+    .attr("d", function(d,i){
+        if (d.species == "setosa") 
+			return symbolTypes.circle.size(20)()
+            //return symbolTypes.circle.size(d.sepalLength*d.sepalLength/10)();
+        if (d.species == "versicolor")
+            return symbolTypes.square.size(20)();
+		if (d.species == "virginica")
+           return symbolTypes.triangleDown.size(20)();
+    })
+	
+	
+    // color of scatter-plot symbols based on 'species'
+    .style("fill", "white")
+	.style("stroke", function(d){
+        if (d.species == "setosa"){ return ("orange")}
+        if (d.species === "versicolor"){return ("blue")}
+        if (d.species === "virginica"){return ("maroon")}
+		})
+	.style("stroke-width", 0.5)
+	
+	
+	//Adding x-axis
+	
+	var x4Axis = d3.svg.axis()
+                  .scale(x4Scale)
+                  .orient("bottom");
+				  
+	svg4.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(0," + (h - padding) + ")")
+	.call(x4Axis);
+	
+	
+	//Adding y-axis
+	
+	var y4Axis = d3.svg.axis()
+                  .scale(y4Scale)
+                  .orient("left");
+				  
+	svg4.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(" + padding + ",0)")
+	.call(y4Axis);
+	
+	
+	//Adding title
+	
+	svg4.append("text")
+        .attr("x", (w / 2.5))             
+        .attr("y", padding/2)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Sepal length (cm) vs. Sepal width (cm) - Square Root scale");
+		
+		
+		
+		
+		
+		///////////// Scatter plot #5 - logarithmic scale
+		
+		
+	var x5Scale = d3.scale.log()
+						.domain([3,d3.max(data, function(d) { return d["sepalLength"]; })])
+						//.range([0,w/2]);
+						.range([padding,w - padding*2]);
+	var y5Scale = d3.scale.log()
+						.domain([1,d3.max(data, function(d) { return d["sepalWidth"]; })])
+						//.range([0,h/2]);
+						.range([h-padding,padding]);
+						
+	
+	
+	var svg5 = d3.select("body")
+            .append("svg")
+			.attr("width", w)
+			.attr("height", h)
+			
+	// symbol generators
+	// Based on: http://stackoverflow.com/questions/29573481/d3-js-scatterplot-with-different-colors-and-symbols-issues-encountered
+	
+	
+	var symbolTypes = {
+		"triangleDown": d3.svg.symbol().type("triangle-up"),
+		"circle": d3.svg.symbol().type("circle"),
+		"square": d3.svg.symbol().type("square")
+	};
+	
+	svg5.selectAll("path")
+    .data(data)
+    .enter().append("path")
+    .attr("class", "dot")
+    .attr("transform", function(d) { 
+		x = x5Scale(d.sepalLength)
+		y = y5Scale(d.sepalWidth)
+        return "translate(" + x + "," + y + ")"
+    })
+    //assign d from symbols generated - per question requirement
+    .attr("d", function(d,i){
+        if (d.species == "setosa") 
+			return symbolTypes.circle.size(20)()
+            //return symbolTypes.circle.size(d.sepalLength*d.sepalLength/10)();
+        if (d.species == "versicolor")
+            return symbolTypes.square.size(20)();
+		if (d.species == "virginica")
+           return symbolTypes.triangleDown.size(20)();
+    })
+	
+	
+    // color of scatter-plot symbols based on 'species'
+    .style("fill", "white")
+	.style("stroke", function(d){
+        if (d.species == "setosa"){ return ("orange")}
+        if (d.species === "versicolor"){return ("blue")}
+        if (d.species === "virginica"){return ("maroon")}
+		})
+	.style("stroke-width", 0.5)
+	
+	
+	//Adding x-axis
+	
+	var x5Axis = d3.svg.axis()
+                  .scale(x5Scale)
+                  .orient("bottom");
+				  
+	svg5.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(0," + (h - padding) + ")")
+	.call(x5Axis);
+	
+	
+	//Adding y-axis
+	
+	var y5Axis = d3.svg.axis()
+                  .scale(y5Scale)
+                  .orient("left");
+				  
+	svg5.append("g")
+    .attr("class", "axis")  //Assign "axis" class
+    .attr("transform", "translate(" + padding + ",0)")
+	.call(y5Axis);
+	
+	
+	//Adding title
+	
+	svg5.append("text")
+        .attr("x", (w / 2.5))             
+        .attr("y", padding/2)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Sepal length (cm) vs. Sepal width (cm) - log scale");
+		
+		
+	
+	
+
+
+	
+	
+	// Adding a legend with symbols, and species represented
+	
+	//var legend2 = svg1.selectAll(".legend")
+    //  .data(["setosa", "versicolor", "virginica"])
+    //.enter().append("g")
+    //  .attr("class", "legend")
+    //  .attr("transform", function(d, i) { return "translate(" + (w + 20) + "," + (i * 20) + ")"; });
+
+  //legend2.append("circle").attr("cx", w-50).attr("cy", h-20).attr("r", 10).style("fill", "purple")
+     //.style("fill", "white");
+
+  //legend2.append("text")
+    //  .attr("x", 26)
+    //  .attr("y", 10)
+    //  .attr("dy", ".35em")
+    //  .text(String);
+
+  //svg1.append("text")
+    //  .attr("class", "label")
+    //  .attr("x", w + 20)
+    //  .attr("y", 10)
+    //  .attr("dy", ".35em")
+    //  .text("Species");
+	
+	})
+	
+	
+
+			
+	
+   
+   
+
+   
+															
+
+   
+   
+
+
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,2 @@
+I made the radius of the node circles proportional to Math.sqrt(10*d.weight).
+Taking a square root compensates for the fact that the radius has a second degree effect on the size (area) of the circle.

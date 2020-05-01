@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v3.min.js"></script>
+<script src="../lib/d3.tip.v0.6.3.js"></script>
+<style>
+
+<head>
+<link rel="stylesheet" href="interactive.css">
+
+</head>
+
+</style>
+
+<body>
+<script>
+
+//Adapted from: http://bl.ocks.org/juan-cb/faf62e91e3c70a99a306
+
+    data = [
+        {product:'Product A',freq:{Q1:716, Q2:1287, Q3:249, Q4:324}}
+		,{product:'Product B',freq:{Q1:2000, Q2:1876, Q3:3009, Q4:973}}
+		,{product:'Product C',freq:{Q1:899, Q2:2333, Q3:418, Q4:213}}
+		,{product:'Product D',freq:{Q1:989, Q2:1543, Q3:1862, Q4: 1111}}
+		,{product:'Product E',freq:{Q1:4200, Q2:3220, Q3:948, Q4: 629}}
+		,{product:'Product F',freq:{Q1:1321, Q2:156, Q3:212, Q4: 821}}
+		,{product:'Product G',freq:{Q1:1977, Q2:247, Q3:1203, Q4: 562}}
+		,{product:'Product H',freq:{Q1:2498, Q2:2852, Q3:942, Q4: 444}}
+    ];
+	
+	dataNew = []
+	
+	for(i = 0; i < data.length; i++)
+	{
+		//tempObj = {"Q1": data[i].freq["Q1"], "Q2": data[i].freq["Q2"], "Q3": data[i].freq["Q3"], "Q4": data[i].freq["Q4"]}
+		dataNew[i] = {"product": data[i].product, 
+						"freq": {"Q1": data[i].freq["Q1"], "Q2": data[i].freq["Q2"], "Q3": data[i].freq["Q3"], "Q4": data[i].freq["Q4"]},
+						"total": (data[i].freq["Q1"] + data[i].freq["Q2"] + data[i].freq["Q3"] + data[i].freq["Q4"])							}
+			
+	}
+
+	//console.log(data[0].freq["Q1"] + data[0].freq["Q2"] + data[0].freq["Q3"] + data[0].freq["Q4"])
+    
+	var div = d3.select("body").append("div").attr("class", "toolTip");
+	
+	
+	var divStat = d3.select("body").append("div").attr("class", "toolTip");
+				divStat.style("right", "25px");
+                divStat.style("bottom", "50px");
+                divStat.style("display", "inline-block");
+				divStat.style("position", "absolute");
+                divStat.html("All Products"+"<br>$"+"42,034"+""
+				+ "<br><br>" + "Q1" + "     $" + "14,600" + "			" + "35" + "%" 
+				+ "<br>" + "Q2" + "     $" + "13,514" + "			" + "32" + "%"
+				+ "<br>" + "Q3" + "     $" + "8,843" + "			" + "21" + "%"
+				+ "<br>" + "Q4" + "     $" + "5,077" + "			" + "12" + "%");
+
+    var axisMargin = 20,
+            margin = 40,
+            valueMargin = 40,
+            //width = parseInt(d3.select('body').style('width'), 10),
+			height = 500,
+			width = 1060,
+            //height = parseInt(d3.select('body').style('height'), 10),
+            barHeight = (height-axisMargin-margin*2)* 0.4/dataNew.length,
+            barPadding = (height-axisMargin-margin*2)*0.6/dataNew.length
+            //dataNew, 
+			,bar, svg, scale, xAxis
+			, labelWidth = 0;
+
+    max = d3.max(dataNew, function(d) { return d.total; });
+	
+	
+
+    svg = d3.select('body')
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+
+    bar = svg.selectAll("g")
+            .data(dataNew)
+            .enter()
+            .append("g");
+
+    bar
+	//.attr("class", "bar")
+			.style("fill", "steelblue")
+            .attr("cx",0)
+            .attr("transform", function(d, i) {
+                return "translate(" + margin + "," + (i * (barHeight + barPadding) + barPadding) + ")";
+            });
+
+    bar.append("text")
+            .attr("class", "label")
+			
+            .attr("y", barHeight / 2)
+            .attr("dy", ".35em") //vertical align middle
+            .text(function(d){
+                return d.product;
+            }).each(function() {
+        labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+    });
+	
+	
+
+    scale = d3.scale.linear()
+            .domain([0, max])
+            .range([0, width - margin*2 - labelWidth]);
+
+    xAxis = d3.svg.axis()
+            .scale(scale)
+            .orient("bottom");
+			//.tickSize(-height + 2*margin + axisMargin)
+            
+
+    bar.append("rect")
+            .attr("transform", "translate("+labelWidth+", 0)")
+            .attr("height", barHeight)
+            .attr("width", function(d){
+                return scale(d.total);
+            });
+
+    bar.append("text")
+			.attr("font", "10px sans-serif")
+			.attr("color", "black")
+            .attr("class", "value")
+            .attr("y", barHeight / 2)
+            .attr("dx", valueMargin + labelWidth) //margin right
+            .attr("dy", ".35em") //vertical align middle
+            .attr("text-anchor", "end")
+            .text(function(d){
+				return("$" + d.total)
+                
+							
+            })
+            .attr("x", function(d){
+                var width = this.getBBox().width;
+                return Math.max(width + valueMargin, scale(d.total));
+            });
+			
+	
+	bar
+            .on("mouseout", function(d){
+				d3.select(this)
+            	.style("fill", "steelblue")
+                div.style("display", "none");
+				div.style("right", "25px");
+                div.style("bottom", "50px");
+                div.style("display", "inline-block");
+				div.style("position", "absolute");
+                div.html("All Products"+"<br>$"+"42,034"+""
+				+ "<br><br>" + "Q1" + "     $" + "14,600" + "			" + "35" + "%" 
+				+ "<br>" + "Q2" + "     $" + "13,514" + "			" + "32" + "%"
+				+ "<br>" + "Q3" + "     $" + "8,843" + "			" + "21" + "%"
+				+ "<br>" + "Q4" + "     $" + "5,077" + "			" + "12" + "%");
+            });
+
+    bar.on("mouseover", function(d){
+				
+				divStat.style("display", "none");
+				d3.select(this)
+            	.style("fill", "orange");
+				//console.log(d3.mouse(this));
+                div.style("right", "25px");
+                div.style("bottom", "50px");
+                div.style("display", "inline-block");
+				div.style("position", "absolute");
+                div.html((d.product)+"<br>$"+(d.total)+""
+				+ "<br><br>" + "Q1" + "     $" + d.freq["Q1"] + "			" + Math.round((d.freq["Q1"]/d.total)*100) + "%" 
+				+ "<br>" + "Q2" + "     $" + d.freq["Q2"] + "			" + Math.round((d.freq["Q2"]/d.total)*100) + "%"
+				+ "<br>" + "Q3" + "     $" + d.freq["Q3"] + "			" + Math.round((d.freq["Q3"]/d.total)*100) + "%"
+				+ "<br>" + "Q4" + "     $" + d.freq["Q4"] + "			" + Math.round((d.freq["Q4"]/d.total)*100) + "%"
+				);
+				
+            });
+    bar
+            /*.on("mouseout", function(d){
+                div.style("display", "none");
+            });*/
+
+    svg.insert("g",":first-child")
+            .attr("class", "axisHorizontal")
+            .attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin)+")")
+            .call(xAxis);
+	
+	svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 20)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Company FooBar: Revenue Generated for Year 2015");
+
+</script>
+</body>
+

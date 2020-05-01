@@ -1,0 +1,3 @@
+Plotting petal-length vs. petal width is the most effective at separating the species. There are visually distinct clusters in the scatter plot, and, mathematically, it would be possible to set thresholds on these two attributes with minimal misclassification.
+
+We use logarithmic scales to show data with outliers or widely spread data. Further, a log scale can be effective for visualising multiplicative (rather than linear) changes in the data.

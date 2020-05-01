@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v3.min.js"></script>
+<style>
+
+<head>
+<link rel="stylesheet" href="heatmap.css">
+
+</head>
+
+</style>
+
+<body>
+
+<script type="text/javascript">
+
+
+
+
+d3.json("/Q4/hourly_heatmap.json", function(data1) {
+d3.json("/Q4/day_heatmap.json", function(data2) {
+
+	
+	/////First heatMap: Hour of day vs. Glucose level
+	
+	hmData1 = []
+	
+	for(i = 0; i < 480 ; i++)
+	{
+		indData = {day:0, bucket:0, count:0};
+		hmData1.push(indData);
+	}
+	
+	for(i = 0; i < 24; i++)
+	{
+		for (j = 0; j < 20; j++)
+		{
+			hmData1[i*20 + j].hour = i
+			hmData1[i*20 + j].bucket = (j+1)*10
+			hmData1[i*20 + j].count = 0
+		}
+	}
+	
+	data1.forEach(function(d) {
+		
+		for(i = 0; i < 24; i++)
+		{ 
+			
+			//if(d.values[i] > 0)
+			hmData1[i*20 + Math.floor(d.values[i]/10)].count++;
+			
+	}
+	}
+    );
+	
+	
+
+	var margin1 = {top: 20, right: 90, bottom: 30, left: 50},
+    width1 = 960 - margin1.left - margin1.right,
+    height1 = 500 - margin1.top - margin1.bottom;
+
+	
+	var x1 = d3.scale.linear().range([0, width1]),
+		y1 = d3.scale.linear().range([height1, 0]),
+		z1 = d3.scale.linear().range(["white", "steelblue"]);
+	
+	//Bucket size: on x-axis: 1 day; on y-axis: 10 units of the glucose reading	
+	var x1Step = 1,
+		y1Step = 10;
+  
+  
+ 
+	svg1 = d3.select("body").append("svg")
+		.attr("width", width1 + margin1.left + margin1.right)
+		.attr("height", height1 + margin1.top + margin1.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin1.left + "," + margin1.top + ")");  
+	
+
+x1.domain([0,24]);
+y1.domain([0,200]);	
+	
+	z1.domain([0, d3.max(hmData1, function(d) { return d.count; })]);	
+	
+	// Extend the x- and y-domain to fit the last bucket.
+	// For example, the y-bucket 3200 corresponds to values [3200, 3300].
+	x1.domain([x1.domain()[0], +x1.domain()[1] + x1Step]);
+	y1.domain([y1.domain()[0], y1.domain()[1] + y1Step]);
+	
+	 svg1.selectAll(".tile")
+      .data(hmData1)
+      .enter().append("rect")
+      .attr("class", "tile")
+      .attr("x", function(d) { return x1(d.hour); })
+      .attr("y", function(d) { return y1(d.bucket /*+ yStep*/); })
+      .attr("width", x1(x1Step) - x1(0))
+      .attr("height",  y1(0) - y1(y1Step))
+      .style("fill", function(d) { return z1(d.count); });
+	
+	
+	
+	
+	
+	  
+	  
+	  // Add a legend for the color values.
+  var legend1 = svg1.selectAll(".legend")
+      .data(z1.ticks(6).slice(1).reverse())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(" + (width1 + 20) + "," + (20 + i * 20) + ")"; });
+
+  legend1.append("rect")
+      .attr("width", 20)
+      .attr("height", 20)
+      .style("fill", z1);
+
+  legend1.append("text")
+      .attr("x", 26)
+      .attr("y", 10)
+      .attr("dy", ".35em")
+      .text(String);
+
+  svg1.append("text")
+      .attr("class", "label")
+      .attr("x", width1 + 20)
+      .attr("y", 10)
+      .attr("dy", ".35em")
+      .text("Count");
+
+  // Add an x-axis with label.
+  svg1.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height1 + ")")
+      .call(d3.svg.axis().scale(x1).orient("bottom"))
+      .append("text")
+      .attr("class", "label")
+      .attr("x", width1)
+      .attr("y", -6)
+      .attr("text-anchor", "end")
+      .text("Hour");
+
+  // Add a y-axis with label.
+  svg1.append("g")
+      .attr("class", "y axis")
+      .call(d3.svg.axis().scale(y1).orient("left"))
+      .append("text")
+      .attr("class", "label")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)")
+      .text("Glucose Reading");
+	  
+	  svg1.append("text")
+        .attr("x", (width1 / 2))             
+        .attr("y", 0 - (margin1.top /4))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Hour of day vs. Glucose Level");
+	  
+	  
+	  
+	  
+	  
+	  
+	  ///////Second heatmap: day of the week vs. Glucose Reading
+	  
+	  hmData2 = []
+	
+	for(i = 0; i < 70; i++)
+	{
+		indData = {day:0, bucket:0, count:0};
+		hmData2.push(indData);
+	}
+	
+	for(i = 0; i < 7; i++)
+	{
+		for (j = 0; j < 10; j++)
+		{
+			hmData2[i*10 + j].day = i
+			hmData2[i*10 + j].bucket = (j+1)*50
+			hmData2[i*10 + j].count = 0
+		}
+	}
+	
+	data2.forEach(function(d) {
+		
+		for(i = 0; i < 7; i++)
+		{ 
+			//console.log(i*10 + Math.floor(d.values[i]/10));
+			if((i*10 + Math.floor(d.values[i]/50)) < 70)
+			//if(d.values[i] > 0)
+			hmData2[i*10 + Math.floor(d.values[i]/50)].count++;
+			
+	}
+	}
+    );
+	
+	
+
+	var margin2 = {top: 20, right: 90, bottom: 30, left: 50},
+    width2 = 960 - margin2.left - margin2.right,
+    height2 = 500 - margin2.top - margin2.bottom;
+
+	
+	var x2 = d3.scale.linear().range([0, width2]),
+		y2 = d3.scale.linear().range([height2, 0]),
+		z2 = d3.scale.linear().range(["white", "purple"]);
+	
+	//Bucket size: on x-axis: 1 day; on y-axis: 10 units of the glucose reading	
+	var x2Step = 1,
+		y2Step = 50;
+  
+  
+ 
+	svg2 = d3.select("body").append("svg")
+		.attr("width", width2 + margin2.left + margin2.right)
+		.attr("height", height2 + margin2.top + margin2.bottom)
+		.append("g")
+		.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");  
+	
+
+x2.domain([0,6]);
+y2.domain([0,500]);	
+	
+	z2.domain([0, d3.max(hmData2, function(d) { return d.count; })]);	
+	
+	// Extend the x- and y-domain to fit the last bucket.
+	// For example, the y-bucket 3200 corresponds to values [3200, 3300].
+	x2.domain([x2.domain()[0], +x2.domain()[1] + x2Step]);
+	y2.domain([y2.domain()[0], y2.domain()[1] + y2Step]);
+	
+	 svg2.selectAll(".tile")
+      .data(hmData2)
+      .enter().append("rect")
+      .attr("class", "tile")
+      .attr("x", function(d) { return x2(d.day); })
+      .attr("y", function(d) { return y2(d.bucket /*+ yStep*/); })
+      .attr("width", x2(x2Step) - x2(0))
+      .attr("height",  y2(0) - y2(y2Step))
+      .style("fill", function(d) { return z2(d.count); });
+	
+	
+	
+	
+	
+	  
+	  
+	  // Add a legend for the color values.
+  var legend2 = svg2.selectAll(".legend")
+      .data(z2.ticks(6).slice(1).reverse())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(" + (width2 + 20) + "," + (20 + i * 20) + ")"; });
+
+  legend2.append("rect")
+      .attr("width", 20)
+      .attr("height", 20)
+      .style("fill", z2);
+
+  legend2.append("text")
+      .attr("x", 26)
+      .attr("y", 10)
+      .attr("dy", ".35em")
+      .text(String);
+
+  svg2.append("text")
+      .attr("class", "label")
+      .attr("x", width2 + 20)
+      .attr("y", 10)
+      .attr("dy", ".35em")
+      .text("Count");
+
+  // Add an x-axis with label.
+  svg2.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height2 + ")")
+      .call(d3.svg.axis().scale(x2).orient("bottom").ticks(7)
+	  .tickFormat(function (d) {
+		switch(d) {
+			case 0: return "Monday"; break;
+			case 1: return "Tuesday"; break;
+			case 2: return "Wednesday"; break;
+			case 3: return "Thursday"; break;
+			case 4: return "Friday"; break;
+			case 5: return "Saturday"; break;
+			case 6: return "Sunday"; break;
+		}})
+	  )
+      .append("text")
+      .attr("class", "label")
+      .attr("x", width2 + 5)
+      .attr("y", -6)
+      .attr("text-anchor", "end")
+      .text("Day");
+
+  // Add a y-axis with label.
+  svg2.append("g")
+      .attr("class", "y axis")
+      .call(d3.svg.axis().scale(y2).orient("left"))
+      .append("text")
+      .attr("class", "label")
+      .attr("y", 6)
+      .attr("dy", ".71em")
+      .attr("text-anchor", "end")
+      .attr("transform", "rotate(-90)")
+      .text("Glucose Reading");
+	  
+	  svg2.append("text")
+        .attr("x", (width2 / 2))             
+        .attr("y", 0 - (margin2.top /4))
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Day of week vs. Glucose Level");
+	  
+})
+});
+
+
+	
+	
+
+
+</script>
+

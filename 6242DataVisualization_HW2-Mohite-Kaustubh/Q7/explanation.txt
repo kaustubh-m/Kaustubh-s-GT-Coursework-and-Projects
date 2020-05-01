@@ -1,0 +1,1 @@
+Graph gives a prospective student a quick summary of the net cost of attendance at some of the most expensive public schools. The details of costs by economic Quintile of the applicant gives an idea of concessions available to poor students (i.e. the ones in the first / lowest Quintile)

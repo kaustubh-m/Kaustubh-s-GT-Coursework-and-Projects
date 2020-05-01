@@ -1,0 +1,1 @@
+Both heat maps show a high frequency of low or zero readings. The highest glucose readings occur: 1. Early in the day (8-10 am) presumably after breakfast. 2. At the start of weekends, possibly because of heavy eating / drinking.

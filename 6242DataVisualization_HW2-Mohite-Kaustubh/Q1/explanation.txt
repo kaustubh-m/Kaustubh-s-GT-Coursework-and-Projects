@@ -1,0 +1,3 @@
+Table: I eliminated fields containing no data, followed those containing no data for the year under consideration. I standardised the names of countries – official names were reduced to common names. I did not add ‘0’ in place of blanks – aim: low ink to data ratio.
+
+Chart: Chose bar chart – for easy comparison of numbers. Used colour coding for the sexes – warm colours vs. cool and for ages – deeper colours for older groups. Retained field showing total male and female refugees. Added legend, since x-axis tick labels were congested.

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<script src="../lib/d3.v3.min.js"></script>
+<script src="../lib/d3.tip.v0.6.3.js"></script>
+<style>
+
+<head>
+<link rel="stylesheet" href="Q7.css">
+
+</head>
+
+</style>
+
+<body>
+<script>
+
+//Adapted from: http://bl.ocks.org/juan-cb/faf62e91e3c70a99a306
+
+d3.csv("public.csv", function(dataPb) {
+
+  
+
+
+    dataPbNew = []
+	
+	for(i = 0; i < dataPb.length; i++)
+	{
+		//tempObj = {"Q1": dataPb[i].freq["Q1"], "Q2": dataPb[i].freq["Q2"], "Q3": dataPb[i].freq["Q3"], "Q4": dataPb[i].freq["Q4"]}
+		dataPbNew[i] = {"Institution": dataPb[i].Institution, 
+						"freq": {"Q1": dataPb[i].Quintile1, "Q2": dataPb[i].Quintile2, "Q3": dataPb[i].Quintile3, "Q4": dataPb[i].Quintile4, "Q5": dataPb[i].Quintile5},
+						"AverageNetCost": dataPb[i].AverageNetCost							}
+			
+	}
+
+	//console.log(dataPbNew[0].freq["Q1"] + "  " +  dataPbNew[0].freq["Q2"] + "  " + dataPbNew[0].freq["Q3"] + "  " +  dataPbNew[0].freq["Q4"] + "  " +  dataPbNew[0].freq["Q5"])
+    //console.log(dataPbNew[0].AverageNetCost)
+	var div = d3.select("body").append("div").attr("class", "toolTip");
+	
+	
+	var divStat = d3.select("body").append("div").attr("class", "toolTip");
+				divStat.style("right", "25px");
+                divStat.style("bottom", "50px");
+                divStat.style("display", "inline-block");
+				divStat.style("position", "absolute");
+                divStat.html("7 Institutions"+"<br>$"+"25,511"+""
+				+ "<br><br>" + "Q1" + "     $" + "19,845" 
+				+ "<br>" + "Q2" + "     $" + "21,758"
+				+ "<br>" + "Q3" + "     $" + "24,970"
+				+ "<br>" + "Q4" + "     $" + "27,600"
+				+ "<br>" + "Q5" + "     $" + "28,480");
+
+    var axisMargin = 20,
+            margin = 40,
+            valueMargin = 40,
+            //width = parseInt(d3.select('body').style('width'), 10),
+			height = 500,
+			width = 1060,
+            //height = parseInt(d3.select('body').style('height'), 10),
+            barHeight = (height-axisMargin-margin*2)* 0.4/dataPbNew.length,
+            barPadding = (height-axisMargin-margin*2)*0.6/dataPbNew.length
+            //dataPbNew, 
+			,bar, svg, scale, xAxis
+			, labelWidth = 0;
+
+    max = d3.max(dataPbNew, function(d) { return d.AverageNetCost; });
+	
+	
+
+    svg = d3.select('body')
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+
+    bar = svg.selectAll("g")
+            .data(dataPbNew)
+            .enter()
+            .append("g");
+
+    bar
+	//.attr("class", "bar")
+			.style("fill", "lightblue")
+            .attr("cx",0)
+            .attr("transform", function(d, i) {
+                return "translate(" + margin + "," + (i * (barHeight + barPadding) + barPadding) + ")";
+            });
+
+    bar.append("text")
+            .attr("class", "label")
+			
+            .attr("y", barHeight / 2)
+            .attr("dy", ".35em") //vertical align middle
+            .text(function(d){
+                return d.Institution;
+            }).each(function() {
+        labelWidth = Math.ceil(Math.max(labelWidth, this.getBBox().width));
+    });
+	
+	
+
+    scale = d3.scale.linear()
+            .domain([0, max])
+            .range([0, width - margin*2 - labelWidth]);
+
+    xAxis = d3.svg.axis()
+            .scale(scale)
+            .orient("bottom");
+			//.tickSize(-height + 2*margin + axisMargin)
+            
+
+    bar.append("rect")
+            .attr("transform", "translate("+labelWidth+", 0)")
+            .attr("height", barHeight)
+            .attr("width", function(d){
+                return scale(d.AverageNetCost);
+            });
+
+    bar.append("text")
+			.attr("font", "10px sans-serif")
+			.attr("color", "black")
+            .attr("class", "value")
+            .attr("y", barHeight / 2)
+            .attr("dx", valueMargin + labelWidth) //margin right
+            .attr("dy", ".35em") //vertical align middle
+            .attr("text-anchor", "end")
+            .text(function(d){
+				return("$" + d.AverageNetCost)
+                
+							
+            })
+            .attr("x", function(d){
+                var width = this.getBBox().width;
+                return Math.max(width + valueMargin, scale(d.AverageNetCost));
+            });
+			
+	
+	bar
+            .on("mouseout", function(d){
+				d3.select(this)
+            	.style("fill", "lightblue")
+                div.style("display", "none");
+				divStat.style("right", "25px");
+                divStat.style("bottom", "50px");
+                divStat.style("display", "inline-block");
+				divStat.style("position", "absolute");
+                divStat.html("7 Institutions"+"<br>$"+"25,511"+""
+				+ "<br><br>" + "Q1" + "     $" + "19,845" 
+				+ "<br>" + "Q2" + "     $" + "21,758"
+				+ "<br>" + "Q3" + "     $" + "24,970"
+				+ "<br>" + "Q4" + "     $" + "27,600"
+				+ "<br>" + "Q5" + "     $" + "28,480");
+            });
+
+    bar.on("mouseover", function(d){
+				
+				divStat.style("display", "none");
+				d3.select(this)
+            	.style("fill", "orange");
+				//console.log(d3.mouse(this));
+                div.style("right", "25px");
+                div.style("bottom", "50px");
+                div.style("display", "inline-block");
+				div.style("position", "absolute");
+                div.html((d.Institution)+"<br>$"+(d.AverageNetCost)+""
+				+ "<br><br>" + "Q1" + "     $" + d.freq["Q1"]
+				+ "<br>" + "Q2" + "     $" + d.freq["Q2"]
+				+ "<br>" + "Q3" + "     $" + d.freq["Q3"]
+				+ "<br>" + "Q4" + "     $" + d.freq["Q4"]
+				+ "<br>" + "Q5" + "     $" + d.freq["Q5"]
+				);
+				
+            });
+    bar
+            /*.on("mouseout", function(d){
+                div.style("display", "none");
+            });*/
+
+    svg.insert("g",":first-child")
+            .attr("class", "axisHorizontal")
+            .attr("transform", "translate(" + (margin + labelWidth) + ","+ (height - axisMargin - margin)+")")
+            .call(xAxis);
+	
+	svg.append("text")
+        .attr("x", (width / 2))             
+        .attr("y", 20)
+        .attr("text-anchor", "middle")  
+        .style("font-size", "16px") 
+        .style("text-decoration", "underline")  
+        .text("Public Schools: Net cost of Attendance per year");
+		
+		
+		
+		
+		
+		
+		
+		
+		
+});
+
+</script>
+</body>
+
